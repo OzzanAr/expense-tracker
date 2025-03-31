@@ -1,11 +1,7 @@
 #include <iostream>
 #include <string>
 #include <Windows.h>
-
-//enum Type{
-//	ADD,
-//	LIST,
-//};
+#include <vector>
 
 class Expense {
 public:
@@ -36,7 +32,7 @@ int main()
 	std::string inputCommand;
 	std::string description;
 
-	std::string temp;
+	int idTracker;
 
 	while (isRunning) {
 		std::cin >> inputCommand;
@@ -47,24 +43,29 @@ int main()
 			break;
 		}
 
-		if (!isExpense && inputCommand != "expense-tracker") {
+		if (!isExpense && inputCommand.substr(0, 15) != "expense-tracker") {
 			std::cout << "Incorrect format for command.\nCorrect format is expanse-tracker.\n";
 			isExpense = true;
-		}
-
-		if (isAdd) {
-			userExpense.AddExpense(inputCommand);
-			isAdd = false;
+			continue;
 		}
 
 		if (inputCommand == "add"){ 
 			std::cout << "Added expense\n";
 			// inputType = ADD;
 			isAdd = true;
+			continue;
+		}
+
+		if (isAdd) {
+			userExpense.AddExpense(inputCommand);
+			isAdd = false;
+			isExpense = false;
+			continue;
 		}
 
 		if (inputCommand == "list"){ 
 			userExpense.PrintExpense();
+			isExpense = false;
 		}
 	}
 
