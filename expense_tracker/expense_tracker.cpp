@@ -27,10 +27,14 @@ public:
 	}
 
 	void PrintExpense() const {
-		std::cout << "ID" << '\t' << "Date" << "\t\t" << "Amount" << std::endl;
-		std::cout << id << '\t' << formattedDate << "\t" << amount << std::endl;
+		std::cout << "ID" << '\t' << "Date" << "\t" << "Description" <<  "\t\t" << "Amount" << std::endl;
+		std::cout << id << '\t' << formattedDate << "\t" << description << "\t" << amount << std::endl;
 	}
 };
+
+void DetermineInput(std::string command) {
+	// TO-DO
+}
 
 int main()
 {
@@ -47,8 +51,10 @@ int main()
 
 	int idTracker;
 
+	std::vector<Expense> userExpenses;
+
 	while (isRunning) {
-		std::cin >> inputCommand;
+		std::getline(std::cin, inputCommand);
 
 		if (inputCommand == "exit") {
 			std::cout << "Shutting down...";
@@ -60,6 +66,7 @@ int main()
 			initInput = inputCommand.substr(0, 15);
 			if (initInput == "expense-tracker") {
 				isExpense = true;
+
 			}
 			else
 			{
