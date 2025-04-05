@@ -3,6 +3,7 @@
 #include <Windows.h>
 #include <vector>
 #include <ctime>
+#include <sstream>
 
 class Expense {
 public:
@@ -32,8 +33,27 @@ public:
 	}
 };
 
+std::vector<std::string> SplitCommand(const std::string& s, char delimiter) {
+	std::vector<std::string> result;
+	std::stringstream stringStream (s);
+	std::string item;
+	
+	while (std::getline(stringStream, item, delimiter)) {
+		result.push_back(item);
+	}
+
+	return result;
+}
+
 void DetermineInput(std::string command) {
-	// TO-DO
+	std::vector<std::string> commandList;
+
+	commandList = SplitCommand(command, ' ');
+
+
+	for (int i = 0; i < commandList.size(); i++) {
+		std::cout << command.at(i) << ' ';
+	}
 }
 
 int main()
@@ -61,6 +81,8 @@ int main()
 			isRunning = false;
 			break;
 		}
+
+		// DetermineInput(inputCommand);
 
 		if (!isExpense) {
 			initInput = inputCommand.substr(0, 15);
