@@ -101,17 +101,10 @@ void DetermineInput(std::string command, Expense &userExpense) {
 int main()
 {
 	bool isRunning = true;
-	bool isExpense = false;
-	bool isAdd = false;
 
-	// Type inputType;
 	Expense userExpense;
 
 	std::string inputCommand;
-	std::string description;
-	std::string initInput;
-
-	int idTracker;
 
 	std::vector<Expense> userExpenses;
 
