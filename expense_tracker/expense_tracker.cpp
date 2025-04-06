@@ -5,19 +5,42 @@
 #include <ctime>
 #include <sstream>
 
+std::string StripQuotes(const std::string& input) {
+	if (input.length() >= 2 && input.front() == '"' && input.back() == '"') {
+		return input.substr(1, input.length() - 2);
+	}
+	return input;
+}
+
 class Expense {
 public:
 	int id;
-	int amount;
-	std::string description;
+	int amount = 0;
+	std::string description = "Empty";
 	std::string formattedDate;
 
 	time_t timestamp;
 	struct tm datetime;
 
-	void AddExpense(std::string input) {
+	void AddExpense(std::vector<std::string> &input) {
 		this->id = 5;
-		this->amount = stoi(input);
+
+		for (size_t i = 2; i + 1 < input.size(); i += 2) {
+			const std::string& flag = input.at(i);
+			const std::string& value = input.at(i + 1);
+
+			try {
+				if (flag == "--amount") {
+					this->amount = stoi(value);
+				}
+				else if (flag == "--description") {
+					this->description = StripQuotes(value);
+				}
+			}
+			catch (const std::exception& e) {
+				std::cerr << "Error parsing value for " << flag << ": " << e.what() << std::endl;
+			}
+		}
 
 		timestamp = time(nullptr);
 		localtime_s(&datetime, &timestamp);
@@ -28,8 +51,8 @@ public:
 	}
 
 	void PrintExpense() const {
-		std::cout << "ID" << '\t' << "Date" << "\t" << "Description" <<  "\t\t" << "Amount" << std::endl;
-		std::cout << id << '\t' << formattedDate << "\t" << description << "\t" << amount << std::endl;
+		std::cout << "ID" << '\t' << "Date" << "\t\t" << "Description" <<  "\t\t" << "Amount" << std::endl;
+		std::cout << id << '\t' << formattedDate << "\t" << description << "\t\t\t" << amount << std::endl;
 	}
 };
 
@@ -45,7 +68,7 @@ std::vector<std::string> SplitCommand(const std::string &input, char delimiter) 
 	return result;
 }
 
-void DetermineInput(std::string command, Expense *userExpense) {
+void DetermineInput(std::string command, Expense &userExpense) {
 	std::vector<std::string> commandList;
 
 	commandList = SplitCommand(command, ' ');
@@ -56,16 +79,16 @@ void DetermineInput(std::string command, Expense *userExpense) {
 	}
 
 	if (commandList.at(1) == "add") {
-		
+		userExpense.AddExpense(commandList);
 	}
 	else if (commandList.at(1) == "summary") {
-
+		// TO-DO
 	}
 	else if (commandList.at(1) == "list") {
-
+		userExpense.PrintExpense();
 	}
 	else if (commandList.at(1) == "delete") {
-
+		// TO-DO
 	}
 	else if (commandList.at(1) == "print") {
 		for (auto& i : commandList) std::cout << i << std::endl;
@@ -101,7 +124,7 @@ int main()
 			break;
 		}
 
-		DetermineInput(inputCommand, &userExpense);
+		DetermineInput(inputCommand, userExpense);
 	}
 
 	return 0;
