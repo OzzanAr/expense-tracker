@@ -33,26 +33,45 @@ public:
 	}
 };
 
-std::vector<std::string> SplitCommand(const std::string& s, char delimiter) {
+std::vector<std::string> SplitCommand(const std::string &input, char delimiter) {
 	std::vector<std::string> result;
-	std::stringstream stringStream (s);
+	std::stringstream stringStream (input);
 	std::string item;
 	
-	while (std::getline(stringStream, item, delimiter)) {
+	while (getline(stringStream, item, delimiter)) {
 		result.push_back(item);
 	}
 
 	return result;
 }
 
-void DetermineInput(std::string command) {
+void DetermineInput(std::string command, Expense *userExpense) {
 	std::vector<std::string> commandList;
 
 	commandList = SplitCommand(command, ' ');
 
+	if (commandList.at(0) != "expense-tracker") {
+		std::cout << "Incorrect format; Please try again..." << std::endl;
+		return;
+	}
 
-	for (int i = 0; i < commandList.size(); i++) {
-		std::cout << command.at(i) << ' ';
+	if (commandList.at(1) == "add") {
+		
+	}
+	else if (commandList.at(1) == "summary") {
+
+	}
+	else if (commandList.at(1) == "list") {
+
+	}
+	else if (commandList.at(1) == "delete") {
+
+	}
+	else if (commandList.at(1) == "print") {
+		for (auto& i : commandList) std::cout << i << std::endl;
+	}
+	else {
+		std::cout << "Incorrect input flag format; Please try again..." << std::endl;
 	}
 }
 
@@ -82,38 +101,7 @@ int main()
 			break;
 		}
 
-		// DetermineInput(inputCommand);
-
-		if (!isExpense) {
-			initInput = inputCommand.substr(0, 15);
-			if (initInput == "expense-tracker") {
-				isExpense = true;
-
-			}
-			else
-			{
-				std::cout << "Incorrect format for command.\nCorrect format is expanse-tracker.\n";
-			}
-		}
-
-		if (inputCommand == "add"){ 
-			std::cout << "Added expense\n";
-			// inputType = ADD;
-			isAdd = true;
-			continue;
-		}
-
-		if (isAdd) {
-			userExpense.AddExpense(inputCommand);
-			isAdd = false;
-			isExpense = false;
-			continue;
-		}
-
-		if (inputCommand == "list"){ 
-			userExpense.PrintExpense();
-			isExpense = false;
-		}
+		DetermineInput(inputCommand, &userExpense);
 	}
 
 	return 0;
