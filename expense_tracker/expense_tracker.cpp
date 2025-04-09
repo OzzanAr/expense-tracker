@@ -22,9 +22,18 @@ public:
 	time_t timestamp;
 	struct tm datetime;
 
-	void AddExpense(std::vector<std::string> &input) {
-		this->id = 5;
+	Expense(int previousId) {
+		id = previousId + 1;
 
+		timestamp = time(nullptr);
+		localtime_s(&datetime, &timestamp);
+
+		formattedDate = std::to_string(datetime.tm_year + 1900) + '-' +
+			std::to_string(datetime.tm_mon + 1) + '-' +
+			std::to_string(datetime.tm_mday);
+	}
+
+	void AddExpense(std::vector<std::string> &input) {
 		for (size_t i = 2; i + 1 < input.size(); i += 2) {
 			const std::string& flag = input.at(i);
 			const std::string& value = input.at(i + 1);
@@ -41,13 +50,6 @@ public:
 				std::cerr << "Error parsing value for " << flag << ": " << e.what() << std::endl;
 			}
 		}
-
-		timestamp = time(nullptr);
-		localtime_s(&datetime, &timestamp);
-
-		formattedDate = std::to_string(datetime.tm_year + 1900) + '-' +
-			std::to_string(datetime.tm_mon + 1) + '-' +
-			std::to_string(datetime.tm_mday);
 	}
 
 	void PrintExpense() const {
@@ -68,7 +70,7 @@ std::vector<std::string> SplitCommand(const std::string &input, char delimiter) 
 	return result;
 }
 
-void DetermineInput(std::string command, Expense &userExpense) {
+void DetermineInput(std::string command, std::vector<Expense> &userExpenses) {
 	std::vector<std::string> commandList;
 
 	commandList = SplitCommand(command, ' ');
@@ -79,13 +81,20 @@ void DetermineInput(std::string command, Expense &userExpense) {
 	}
 
 	if (commandList.at(1) == "add") {
-		userExpense.AddExpense(commandList);
+		if (userExpenses.empty()) {
+			userExpenses.emplace_back(0);
+			userExpenses.back().AddExpense(commandList);
+		}
+
+		//userExpense.AddExpense(commandList);
 	}
 	else if (commandList.at(1) == "summary") {
 		// TO-DO
 	}
 	else if (commandList.at(1) == "list") {
-		userExpense.PrintExpense();
+		for (size_t i = 0; i < userExpenses.size(); i++) {
+			userExpenses.at(i).PrintExpense();
+		}
 	}
 	else if (commandList.at(1) == "delete") {
 		// TO-DO
@@ -102,8 +111,6 @@ int main()
 {
 	bool isRunning = true;
 
-	Expense userExpense;
-
 	std::string inputCommand;
 
 	std::vector<Expense> userExpenses;
@@ -117,7 +124,7 @@ int main()
 			break;
 		}
 
-		DetermineInput(inputCommand, userExpense);
+		DetermineInput(inputCommand, userExpenses);
 	}
 
 	return 0;
